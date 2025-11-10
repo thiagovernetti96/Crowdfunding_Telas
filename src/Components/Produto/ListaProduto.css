@@ -1,0 +1,37 @@
+.card-produto{
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  border: 0;
+
+}
+
+.card-produto {
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid #dee2e6;
+}
+
+.card-produto:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-produto .card-img-top {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.cadastrar-produto {
+  display: block;
+  width: 30%;
+  margin: auto;
+  white-space: nowrap;  
+  font-size: 24px;
+  transition: background-color 0.3s ease;
+}
+
+a{
+  text-decoration: none;
+}

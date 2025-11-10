@@ -1,0 +1,175 @@
+.apoio-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.produto-info {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.produto-nome {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.produto-descricao {
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.produto-meta {
+  color: #28a745;
+  font-weight: bold;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+
+.valor-input {
+  font-size: 1.1rem;
+  padding: 0.75rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.valor-input:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.btn-apoiar {
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-apoiar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.pix-section {
+  text-align: center;
+  margin-top: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pix-section .card-header {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+}
+
+.qr-code {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: white;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.qr-placeholder {
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #6c757d;
+}
+
+.pix-code {
+  word-break: break-all;
+  font-size: 0.8rem;
+  color: #495057;
+  margin-top: 1rem;
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pix-code:hover {
+  background: #e9ecef;
+}
+
+.payment-info {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.status-pago {
+  color: #28a745;
+  font-weight: bold;
+  background: #d4edda;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.status-pendente {
+  color: #fd7e14;
+  font-weight: bold;
+  background: #ffe5d0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.status-criado {
+  color: #17a2b8;
+  font-weight: bold;
+  background: #d1ecf1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.status-aguardando {
+  color: #6c757d;
+  font-weight: bold;
+  background: #e2e3e5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 3rem;
+}
+
+.error-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .apoio-container {
+    margin: 1rem auto;
+    padding: 0.5rem;
+  }
+  
+  .produto-info {
+    padding: 1rem;
+  }
+  
+  .qr-code {
+    padding: 1rem;
+  }
+  
+  .pix-code {
+    font-size: 0.7rem;
+  }
+}
