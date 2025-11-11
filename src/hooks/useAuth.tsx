@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
@@ -24,17 +24,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken, removeToken] = useLocalStorage<string | null>("token", null);
   const [nome, setNome, removeNome] = useLocalStorage<string | null>("nome", null);
 
-  const login = (newToken: string, newNome: string) => {
+  const login = useCallback((newToken: string, newNome: string) => {
     setToken(newToken);
     setNome(newNome);
     navigate("/");
-  };
+  }, [setToken, setNome, navigate]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     removeToken();
     removeNome();
     navigate("/login");
-  };
+  }, [removeToken, removeNome, navigate]);
 
   const value = useMemo(
     () => ({
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       login,
       logout,
     }),
-    [token, nome,login,logout]
+    [token, nome, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

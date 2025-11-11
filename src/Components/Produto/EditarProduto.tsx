@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import '../Produto/CadastroProduto.css'
 
@@ -15,7 +15,6 @@ function EditarProduto() {
 
 
   const{id}= useParams<{id:string}>();
-  /*const navigate = useNavigate();*/
 
   const[produto,setProduto] = useState({
     nome:'',

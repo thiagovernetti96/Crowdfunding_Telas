@@ -1,5 +1,5 @@
 // MeusProdutos.tsx - atualizado
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Card, Container, Row, Col, Alert, ProgressBar } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -24,16 +24,9 @@ function MeusProdutos() {
   /*const [erro, setErro] = useState('');*/
   const { nome, isAuthenticated, token } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated && nome && token) {
-      carregarMeusProdutos();
-    }
-  }, [nome, isAuthenticated, token]);
-
-  const carregarMeusProdutos = async () => {
+  const carregarMeusProdutos = useCallback(async () => {
     setCarregando(true);
     try {
-      /* Versão do local host const response = await fetch(`http://localhost:3000/api/produto/criador/${encodeURIComponent(nome ?? '')}/com-arrecadacao`*/
       const response = await fetch(`https://crowdfunding-vxjp.onrender.com/api/produto/criador/${encodeURIComponent(nome ?? '')}/com-arrecadacao`, {
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +50,13 @@ function MeusProdutos() {
     } finally {
       setCarregando(false);
     }
-  };
+  }, [nome, token]);
+
+  useEffect(() => {
+    if (isAuthenticated && nome && token) {
+      carregarMeusProdutos();
+    }
+  }, [isAuthenticated, nome, token, carregarMeusProdutos]);
 
    const deletarProduto = async (id: number) => {
     const confirmacao = window.confirm("Tem certeza que deseja excluir este produto?");

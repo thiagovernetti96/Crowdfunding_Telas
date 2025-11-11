@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Card, Container, Row, Col, Alert, ProgressBar } from "react-bootstrap";
 import '../Produto/ListaProduto.css';
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -32,17 +32,7 @@ function ListaProdutos() {
   const termoBusca = queryParams.get('buscaporNome') || '';
   const categoriaFiltro = queryParams.get('categoria') || '';
 
-  useEffect(() => {
-    carregarTodosProdutos();
-  }, []);
-
-  useEffect(() => {
-    if (todosProdutos.length > 0) {
-      aplicarFiltros();
-    }
-  }, [termoBusca, categoriaFiltro, todosProdutos]);
-
-  const carregarTodosProdutos = async () => {
+  const carregarTodosProdutos = useCallback(async () => {
     setCarregando(true);
     setErro('');
     try {
@@ -68,9 +58,9 @@ function ListaProdutos() {
     } finally {
       setCarregando(false);
     }
-  };
+  }, []);
 
-  const aplicarFiltros = () => {
+  const aplicarFiltros = useCallback(() => {
     let produtosFiltrados = [...todosProdutos];
 
     if (termoBusca) {
@@ -86,7 +76,17 @@ function ListaProdutos() {
     }
 
     setProdutos(produtosFiltrados);
-  };
+  }, [termoBusca, categoriaFiltro, todosProdutos]);
+
+  useEffect(() => {
+    carregarTodosProdutos();
+  }, [carregarTodosProdutos]);
+
+  useEffect(() => {
+    if (todosProdutos.length > 0) {
+      aplicarFiltros();
+    }
+  }, [termoBusca, categoriaFiltro, todosProdutos, aplicarFiltros]);
 
   const limparFiltros = () => {
     navigate('/', { replace: true });
