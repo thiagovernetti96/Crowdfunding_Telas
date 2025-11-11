@@ -191,7 +191,7 @@ function Apoio() {
         throw new Error("Erro ao simular pagamento");
       }
 
-      const result = await response.json();
+      /*const result = await response.json();*/
       setStatus("PAID");
       alert("✅ Pagamento simulado com sucesso!");
     } catch (error) {

@@ -21,7 +21,7 @@ type Produto = {
 function MeusProdutos() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState('');
+  /*const [erro, setErro] = useState('');*/
   const { nome, isAuthenticated, token } = useAuth();
 
   useEffect(() => {
@@ -32,7 +32,6 @@ function MeusProdutos() {
 
   const carregarMeusProdutos = async () => {
     setCarregando(true);
-    setErro('');
     try {
       /* Versão do local host const response = await fetch(`http://localhost:3000/api/produto/criador/${encodeURIComponent(nome ?? '')}/com-arrecadacao`*/
       const response = await fetch(`https://crowdfunding-vxjp.onrender.com/api/produto/criador/${encodeURIComponent(nome ?? '')}/com-arrecadacao`, {
@@ -54,7 +53,7 @@ function MeusProdutos() {
       
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
-      setErro('Erro ao carregar seus produtos');
+      /*setErro('Erro ao carregar seus produtos');*/
     } finally {
       setCarregando(false);
     }

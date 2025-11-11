@@ -1,5 +1,4 @@
 import {useState} from 'react'
-import { Link } from 'react-router-dom';
 import '../Usuario/CadastroUsuario.css'
 import { InputGroup } from "react-bootstrap";
 import Form from "react-bootstrap/Form";

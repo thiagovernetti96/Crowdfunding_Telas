@@ -15,7 +15,7 @@ function EditarProduto() {
 
 
   const{id}= useParams<{id:string}>();
-  const navigate = useNavigate();
+  /*const navigate = useNavigate();*/
 
   const[produto,setProduto] = useState({
     nome:'',
