@@ -12,7 +12,7 @@ function Categorias() {
   useEffect(() => {
     const fetchCategoria = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/categoria", {
+        const response = await fetch("https://crowdfunding-vxjp.onrender.com/api/categoria", {
           headers: {
             "Content-Type": "application/json"          
           }

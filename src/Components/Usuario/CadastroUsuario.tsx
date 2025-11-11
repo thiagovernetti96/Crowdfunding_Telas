@@ -23,7 +23,7 @@ function CadastroUsuario() {
     event.preventDefault();
     const dados: UsuarioData={email,senha,nome}
     try{
-      const response = await fetch("http://localhost:3000/api/usuario",{
+      const response = await fetch("https://crowdfunding-vxjp.onrender.com/api/usuario",{
         method:"POST",
         headers:{
           "Content-Type": "application/json"

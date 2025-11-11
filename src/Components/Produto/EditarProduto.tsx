@@ -39,7 +39,7 @@ function EditarProduto() {
           headers["Token"] = token;
         }
 
-        const response = await fetch(`http://localhost:3000/api/produto/${id}`, {
+        const response = await fetch(`https://crowdfunding-vxjp.onrender.com/api/produto/${id}`, {
           method: 'GET',
           headers
         });
@@ -58,7 +58,7 @@ function EditarProduto() {
   }, [id]);
 
   try{
-    fetch("http://localhost:3000/api/categoria")
+    fetch("https://crowdfunding-vxjp.onrender.com/api/categoria")
     .then((res)=>res.json())
     .then((data)=>setCategorias(data))
     .catch((err)=>console.error("Erro ao buscar categorias:",err));
@@ -72,7 +72,7 @@ function EditarProduto() {
     event.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:3000/api/produto/${id}`, {
+      const response = await fetch(`https://crowdfunding-vxjp.onrender.com/api/produto/${id}`, {
         method: 'PUT',
         headers: {
           "Content-Type": "application/json",

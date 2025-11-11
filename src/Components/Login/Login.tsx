@@ -17,7 +17,7 @@ function Login() {
  const validarUsuario = async (e: React.FormEvent) => {
   e.preventDefault();
   try {
-    const response = await fetch("http://localhost:3000/api/login", {
+    const response = await fetch("https://crowdfunding-vxjp.onrender.com/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, senha }),

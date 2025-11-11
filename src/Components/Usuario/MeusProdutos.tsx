@@ -34,7 +34,8 @@ function MeusProdutos() {
     setCarregando(true);
     setErro('');
     try {
-      const response = await fetch(`http://localhost:3000/api/produto/criador/${encodeURIComponent(nome ?? '')}/com-arrecadacao`, {
+      /* Versão do local host const response = await fetch(`http://localhost:3000/api/produto/criador/${encodeURIComponent(nome ?? '')}/com-arrecadacao`*/
+      const response = await fetch(`https://crowdfunding-vxjp.onrender.com/api/produto/criador/${encodeURIComponent(nome ?? '')}/com-arrecadacao`, {
         headers: {
           "Content-Type": "application/json",
           "Token": token || "",
@@ -66,7 +67,7 @@ function MeusProdutos() {
   const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(`http://localhost:3000/api/produto/${id}`, {
+      const response = await fetch(`https://crowdfunding-vxjp.onrender.com/api/produto/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

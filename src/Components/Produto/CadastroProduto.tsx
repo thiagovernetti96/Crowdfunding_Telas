@@ -45,7 +45,7 @@ function CadastroProduto() {
       setProduto((prev) => ({ ...prev, usuarioId: user.id }));
 
       // Busca categorias da API
-      fetch("http://localhost:3000/api/categoria")
+      fetch("https://crowdfunding-vxjp.onrender.com/api/categoria")
         .then((res) => res.json())
         .then((data) => setCategorias(data))
         .catch((err) => console.error("Erro ao buscar categorias:", err));
@@ -99,7 +99,7 @@ function CadastroProduto() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/produto", {
+      const response = await fetch("https://crowdfunding-vxjp.onrender.com/api/produto", {
         method: "POST",
         headers: {
           "Token": token || "",

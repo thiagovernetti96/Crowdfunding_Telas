@@ -66,7 +66,7 @@ function Apoio() {
 
         setUsuarioLogado(user);
 
-        const response = await fetch(`http://localhost:3000/api/produto/${id}`);
+        const response = await fetch(`https://crowdfunding-vxjp.onrender.com/api/produto/${id}`);
         if (!response.ok) {
           throw new Error("Produto não encontrado");
         }
@@ -109,7 +109,7 @@ function Apoio() {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/apoio", {
+      const response = await fetch("https://crowdfunding-vxjp.onrender.com/api/apoio", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -143,7 +143,7 @@ function Apoio() {
     const interval = setInterval(async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/apoio/${apoioId}/status`,
+          `https://crowdfunding-vxjp.onrender.com/api/apoio/${apoioId}/status`,
           {
             headers: { 
               "Content-Type": "application/json",
@@ -177,7 +177,7 @@ function Apoio() {
   }
     try {
       const response = await fetch(
-        `http://localhost:3000/api/apoio/${apoioId}/simular`,
+        `https://crowdfunding-vxjp.onrender.com/api/apoio/${apoioId}/simular`,
         {
           method: "POST",
           headers: {
