@@ -482,7 +482,7 @@ useEffect(() => {
                       )}
                     </div>
 
-                    { status !== "PAID" && (
+                    { status == "PENDING" && (
                       <div className="mt-3 text-center">
                         <Button 
                           variant="outline-warning" 
