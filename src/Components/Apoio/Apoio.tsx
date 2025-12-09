@@ -151,82 +151,28 @@ function Apoio() {
 
       alert("✅ Apoio criado com sucesso! Escaneie o QR Code para pagar.");
 
-      startStatusCheck(data.apoio.id);
+ 
     } catch (error) {
       console.error("Erro ao cadastrar apoio:", error);
       alert(error instanceof Error ? error.message : "Erro ao cadastrar apoio");
     }
   };
 
-  const startStatusCheck = (apoioId: number) => {
-  // Para qualquer intervalo anterior
-  if (statusInterval) {
-    clearInterval(statusInterval);
-  }
   
-  const interval = setInterval(async () => {
-    try {
-      const response = await fetch(
-        `https://crowdfunding-vxjp.onrender.com/api/apoio/${apoioId}/status`,
-        {
-          headers: { 
-            "Content-Type": "application/json",
-            "Token": token || "",
-          },
-        }
-      );
 
-      if (!response.ok) throw new Error("Erro ao verificar status");
-      
-      const result = await response.json();
-      console.log("📊 Status verificado:", result.pixStatus);
-      setStatus(result.pixStatus);
-
-      if (result.pixStatus === "PAID") {
-        console.log("🎉 Pagamento confirmado! Parando verificação...");
-        clearInterval(interval);
-        setStatusInterval(null);
-        alert("🎉 Pagamento confirmado com sucesso!");
-        
-        // Opcional: recarrega após confirmação
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
-      }
-    } catch (err) {
-      console.error("Erro ao verificar status:", err);
-    }
-  }, 10000); // Verifica a cada 10 segundos
-  
-  // Salva a referência do intervalo
-  setStatusInterval(interval);
-  
-  // Limpa o intervalo quando o componente for desmontado
-  return () => {
-    if (interval) clearInterval(interval);
-  };
-};
-
-// No useEffect, chame startStatusCheck
-useEffect(() => {
-  if (apoioId) {
-    startStatusCheck(apoioId);
-  }
-}, [apoioId]);
-
- const simularPagamento = async () => {
+const simularPagamento = async () => {
   if (!apoioId) {
     alert("Erro: ID do apoio não encontrado");
     return;
   }
   
-  //  Verifica se não é um ID temporário
+  // Verifica se não é um ID temporário
   if (pixData?.id?.startsWith('temp_')) {
     alert("Aguarde a geração completa do QR Code antes de simular o pagamento.");
     return;
   }
 
-  if (!confirm("Deseja simular o pagamento deste PIX? (Apenas para testes)")) {
+  if (!window.confirm("Deseja simular o pagamento deste PIX? (Apenas para testes)")) {
     return;
   }
 
@@ -255,12 +201,8 @@ useEffect(() => {
     // Atualiza status imediatamente
     setStatus("PAID");
     
-    // Para a verificação periódica
-    //
+    alert("✅ Pagamento simulado com sucesso! Status atualizado.");
     
-    alert(" Pagamento simulado com sucesso! Status atualizado.");
-    
-    // Recarrega a página após 2 segundos para atualizar tudo
     setTimeout(() => {
       window.location.reload();
     }, 2000);
@@ -458,7 +400,7 @@ useEffect(() => {
                     <div className="payment-info mt-3">
                       <Row>
                         <Col md={6}>
-                          {/* ✅ CORREÇÃO: Use amount ou valor com fallback */}
+                          {/*  Usa amount ou valor com fallback */}
                           <strong>Valor:</strong> R$ {(pixData.amount || pixData.valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </Col>
                         <Col md={6}>
@@ -468,7 +410,7 @@ useEffect(() => {
                           </span>
                         </Col>
                       </Row>
-                      {/* ✅ CORREÇÃO: Use expiresAt (com A maiúsculo) */}
+                    
                       {pixData.expiresAt && (
                         <div className="mt-2">
                           <strong>Expira em:</strong> {new Date(pixData.expiresAt).toLocaleString('pt-BR')}
@@ -482,7 +424,7 @@ useEffect(() => {
                       )}
                     </div>
 
-                    
+                    { status !== "PAID" && (
                       <div className="mt-3 text-center">
                         <Button 
                           variant="outline-warning" 
@@ -490,9 +432,9 @@ useEffect(() => {
                           onClick={simularPagamento}
                         >
                           🧪 Simular Pagamento (Dev)
-                        </Button>                      
+                        </Button>
                       </div>
-                  
+                    )}
                   </Card.Body>
                 </Card>
               )}
