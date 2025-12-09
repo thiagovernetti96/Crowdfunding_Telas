@@ -34,9 +34,11 @@ function Apoio() {
     valor: 0,
   });
   const [pixData, setPixData] = useState<any>(null);
-  const [qrCodeImage, setQrCodeImage] = useState<string>(""); // ✅ Novo estado para QR Code
+  const [qrCodeImage, setQrCodeImage] = useState<string>(""); //  Novo estado para QR Code
   const [status, setStatus] = useState<string>("");
   const [apoioId, setApoioId] = useState<number | null>(null);
+  const [statusInterval, setStatusInterval] = useState<NodeJS.Timeout | null>(null);
+
 
   const token = localStorage.getItem("token");
 
@@ -157,65 +159,117 @@ function Apoio() {
   };
 
   const startStatusCheck = (apoioId: number) => {
-    const interval = setInterval(async () => {
-      try {
-        const response = await fetch(
-          `https://crowdfunding-vxjp.onrender.com/api/apoio/${apoioId}/status`,
-          {
-            headers: { 
-              "Content-Type": "application/json",
-              "Token": token || "",
-            },
-          }
-        );
-
-        if (!response.ok) throw new Error("Erro ao verificar status");
-        
-        const result = await response.json();
-        setStatus(result.pixStatus);
-
-        if (result.pixStatus === "PAID") {
-          alert("🎉 Pagamento confirmado com sucesso!");
-          clearInterval(interval);
-        }
-      } catch (err) {
-        console.error("Erro ao verificar status:", err);
-      }
-    }, 10000);
-  };
-
-  const simularPagamento = async () => {
-    if (!apoioId) return;
-    
-    // ✅ Verifica se o QR Code foi gerado (não é temporário)
-    if (pixData?.id?.startsWith('temp_')) {
-      alert("Aguarde a geração completa do QR Code antes de simular o pagamento.");
-      return;
-    }
-    
+  // Para qualquer intervalo anterior
+  if (statusInterval) {
+    clearInterval(statusInterval);
+  }
+  
+  const interval = setInterval(async () => {
     try {
       const response = await fetch(
-        `https://crowdfunding-vxjp.onrender.com/api/apoio/${apoioId}/simular`,
+        `https://crowdfunding-vxjp.onrender.com/api/apoio/${apoioId}/status`,
         {
-          method: "POST",
-          headers: {
+          headers: { 
             "Content-Type": "application/json",
             "Token": token || "",
           },
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Erro ao simular pagamento");
-      }
+      if (!response.ok) throw new Error("Erro ao verificar status");
+      
+      const result = await response.json();
+      console.log("📊 Status verificado:", result.pixStatus);
+      setStatus(result.pixStatus);
 
-      setStatus("PAID");
-      alert("✅ Pagamento simulado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao simular pagamento:", error);
-      alert("Erro ao simular pagamento");
+      if (result.pixStatus === "PAID") {
+        console.log("🎉 Pagamento confirmado! Parando verificação...");
+        clearInterval(interval);
+        setStatusInterval(null);
+        alert("🎉 Pagamento confirmado com sucesso!");
+        
+        // Opcional: recarrega após confirmação
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Erro ao verificar status:", err);
     }
+  }, 10000); // Verifica a cada 10 segundos
+  
+  // Salva a referência do intervalo
+  setStatusInterval(interval);
+  
+  // Limpa o intervalo quando o componente for desmontado
+  return () => {
+    if (interval) clearInterval(interval);
   };
+};
+
+// No useEffect, chame startStatusCheck
+useEffect(() => {
+  if (apoioId) {
+    startStatusCheck(apoioId);
+  }
+}, [apoioId]);
+
+ const simularPagamento = async () => {
+  if (!apoioId) {
+    alert("Erro: ID do apoio não encontrado");
+    return;
+  }
+  
+  //  Verifica se não é um ID temporário
+  if (pixData?.id?.startsWith('temp_')) {
+    alert("Aguarde a geração completa do QR Code antes de simular o pagamento.");
+    return;
+  }
+
+  if (!confirm("Deseja simular o pagamento deste PIX? (Apenas para testes)")) {
+    return;
+  }
+
+  try {
+    console.log("🎮 Simulando pagamento para apoio ID:", apoioId);
+    
+    const response = await fetch(
+      `https://crowdfunding-vxjp.onrender.com/api/apoio/${apoioId}/simular`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Token": token || "",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Erro ao simular pagamento");
+    }
+
+    const result = await response.json();
+    console.log("✅ Resultado da simulação:", result);
+    
+    // Atualiza status imediatamente
+    setStatus("PAID");
+    
+    // Para a verificação periódica
+    //
+    
+    alert(" Pagamento simulado com sucesso! Status atualizado.");
+    
+    // Recarrega a página após 2 segundos para atualizar tudo
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+    
+  } catch (error) {
+    console.error(" Erro ao simular pagamento:", error);
+    alert(error instanceof Error ? error.message : "Erro ao simular pagamento");
+  }
+};
 
   const getStatusClass = () => {
     switch (status) {
@@ -358,15 +412,6 @@ function Apoio() {
                               margin: "0 auto"
                             }}
                           />
-                          <div className="text-center mt-2">
-                            <Button 
-                              variant="outline-info" 
-                              size="sm"
-                              onClick={recarregarQRCode}
-                            >
-                              🔄 Recarregar QR Code
-                            </Button>
-                          </div>
                         </>
                       ) : (
                         <div className="qr-placeholder text-center">
