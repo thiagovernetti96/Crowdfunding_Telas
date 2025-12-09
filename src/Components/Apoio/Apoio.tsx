@@ -34,6 +34,7 @@ function Apoio() {
     valor: 0,
   });
   const [pixData, setPixData] = useState<any>(null);
+  const [qrCodeImage, setQrCodeImage] = useState<string>(""); // ✅ Novo estado para QR Code
   const [status, setStatus] = useState<string>("");
   const [apoioId, setApoioId] = useState<number | null>(null);
 
@@ -88,6 +89,22 @@ function Apoio() {
 
     carregarDados();
   }, [token, id, navigate]);
+
+  // ✅ Efeito para processar o QR Code quando pixData mudar
+  useEffect(() => {
+    if (pixData?.brCode) {
+      // Se a API já retornou um base64 válido, use ele
+      if (pixData.brCodeBase64 && pixData.brCodeBase64.startsWith('data:image')) {
+        setQrCodeImage(pixData.brCodeBase64);
+        console.log("✅ Usando QR Code da API");
+      } else if (pixData.brCode) {
+        // Se não, tente gerar localmente (fallback)
+        console.log("⚠️ QR Code não veio da API, usando código PIX para exibição");
+        // Não geramos localmente para evitar dependência extra
+        setQrCodeImage(""); // Limpa o QR Code se não tiver
+      }
+    }
+  }, [pixData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,7 +177,6 @@ function Apoio() {
         if (result.pixStatus === "PAID") {
           alert("🎉 Pagamento confirmado com sucesso!");
           clearInterval(interval);
-
         }
       } catch (err) {
         console.error("Erro ao verificar status:", err);
@@ -170,11 +186,13 @@ function Apoio() {
 
   const simularPagamento = async () => {
     if (!apoioId) return;
+    
     // ✅ Verifica se o QR Code foi gerado (não é temporário)
     if (pixData?.id?.startsWith('temp_')) {
-    alert("Aguarde a geração completa do QR Code antes de simular o pagamento.");
-    return;
-  }
+      alert("Aguarde a geração completa do QR Code antes de simular o pagamento.");
+      return;
+    }
+    
     try {
       const response = await fetch(
         `https://crowdfunding-vxjp.onrender.com/api/apoio/${apoioId}/simular`,
@@ -191,7 +209,6 @@ function Apoio() {
         throw new Error("Erro ao simular pagamento");
       }
 
-      /*const result = await response.json();*/
       setStatus("PAID");
       alert("✅ Pagamento simulado com sucesso!");
     } catch (error) {
@@ -215,6 +232,14 @@ function Apoio() {
       case "PENDING": return "⏳ PENDENTE";
       case "CREATED": return "📱 QR CODE GERADO";
       default: return "❌ AGUARDANDO";
+    }
+  };
+
+  const recarregarQRCode = () => {
+    if (pixData?.brCodeBase64) {
+      // Força recarregamento da imagem
+      setQrCodeImage(pixData.brCodeBase64 + '?t=' + Date.now());
+      alert("QR Code recarregado!");
     }
   };
 
@@ -319,17 +344,47 @@ function Apoio() {
                   <Card.Body>
  
                     <div className="qr-code">
-                      {pixData.brCodeBase64 ? (
-                        <img
-                          src={`data:image/png;base64,${pixData.brCodeBase64}`}
-                          alt="QR Code PIX"
-                          className="img-fluid"
-                          style={{ maxWidth: "250px" }}
-                        />
+                      {qrCodeImage ? (
+                        <>
+                          <img
+                            src={qrCodeImage} // ✅ Usa qrCodeImage diretamente
+                            alt="QR Code PIX"
+                            className="img-fluid"
+                            style={{ 
+                              maxWidth: "250px", 
+                              border: "1px solid #ddd", 
+                              borderRadius: "8px",
+                              display: "block",
+                              margin: "0 auto"
+                            }}
+                          />
+                          <div className="text-center mt-2">
+                            <Button 
+                              variant="outline-info" 
+                              size="sm"
+                              onClick={recarregarQRCode}
+                            >
+                              🔄 Recarregar QR Code
+                            </Button>
+                          </div>
+                        </>
                       ) : (
-                        <div className="qr-placeholder">
+                        <div className="qr-placeholder text-center">
                           <p>QR Code gerado com sucesso!</p>
-                          <small>Use o código PIX abaixo</small>
+                          <small>Use o código PIX abaixo para pagar</small>
+                          <div className="mt-3">
+                            <Button 
+                              variant="outline-primary" 
+                              size="sm"
+                              onClick={() => {
+                                // Copia o código PIX
+                                navigator.clipboard.writeText(pixData.brCode);
+                                alert("Código PIX copiado! Cole no seu app de banco.");
+                              }}
+                            >
+                              📋 Copiar Código PIX
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -358,7 +413,8 @@ function Apoio() {
                     <div className="payment-info mt-3">
                       <Row>
                         <Col md={6}>
-                          <strong>Valor:</strong> R$ {pixData.valor}
+                          {/* ✅ CORREÇÃO: Use amount ou valor com fallback */}
+                          <strong>Valor:</strong> R$ {(pixData.amount || pixData.valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </Col>
                         <Col md={6}>
                           <strong>Status: </strong>
@@ -367,9 +423,16 @@ function Apoio() {
                           </span>
                         </Col>
                       </Row>
-                      {pixData.expires_at && (
+                      {/* ✅ CORREÇÃO: Use expiresAt (com A maiúsculo) */}
+                      {pixData.expiresAt && (
                         <div className="mt-2">
-                          <strong>Expira em:</strong> {new Date(pixData.expires_at).toLocaleString()}
+                          <strong>Expira em:</strong> {new Date(pixData.expiresAt).toLocaleString('pt-BR')}
+                        </div>
+                      )}
+                      {/* Fallback para expires_at (minúsculo) se existir */}
+                      {!pixData.expiresAt && pixData.expires_at && (
+                        <div className="mt-2">
+                          <strong>Expira em:</strong> {new Date(pixData.expires_at).toLocaleString('pt-BR')}
                         </div>
                       )}
                     </div>
