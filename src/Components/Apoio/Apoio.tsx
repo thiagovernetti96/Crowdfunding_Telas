@@ -482,7 +482,7 @@ useEffect(() => {
                       )}
                     </div>
 
-                    { status == "PENDING" && (
+                    
                       <div className="mt-3 text-center">
                         <Button 
                           variant="outline-warning" 
@@ -490,9 +490,9 @@ useEffect(() => {
                           onClick={simularPagamento}
                         >
                           🧪 Simular Pagamento (Dev)
-                        </Button>
+                        </Button>                      
                       </div>
-                    )}
+                  
                   </Card.Body>
                 </Card>
               )}
