@@ -482,7 +482,7 @@ useEffect(() => {
                       )}
                     </div>
 
-                    {process.env.NODE_ENV === 'development' && status !== "PAID" && (
+                    { status !== "PAID" && (
                       <div className="mt-3 text-center">
                         <Button 
                           variant="outline-warning" 
