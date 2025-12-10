@@ -22,7 +22,6 @@ type Produto = {
 
 function ListaProdutos() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [todosProdutos, setTodosProdutos] = useState<Produto[]>([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
   const location = useLocation();
@@ -32,61 +31,54 @@ function ListaProdutos() {
   const termoBusca = queryParams.get('buscaporNome') || '';
   const categoriaFiltro = queryParams.get('categoria') || '';
 
-  const carregarTodosProdutos = useCallback(async () => {
+  //  função para carregar produtos com filtros
+  const carregarProdutos = useCallback(async () => {
     setCarregando(true);
     setErro('');
     try {
-      const response = await fetch(`https://crowdfunding-vxjp.onrender.com/api/produto/com-arrecadacao`, {
+      let url = `https://crowdfunding-vxjp.onrender.com/api/produto/com-arrecadacao`;
+      
+      // Se tem categoria, usa a rota específica
+      if (categoriaFiltro) {
+        url = `https://crowdfunding-vxjp.onrender.com/api/produto/categoria/${encodeURIComponent(categoriaFiltro)}`;
+      }
+      
+      console.log(`Buscando em: ${url}`);
+      const response = await fetch(url, {
         headers: {
           "Content-Type": "application/json"          
         }
       });
 
       if (!response.ok) {
-        throw new Error("Erro ao buscar produtos.");
+        throw new Error(`Erro ao buscar produtos: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Todos os produtos carregados:", data);
+      console.log("Produtos carregados:", data);
       
-      const produtosArray = Array.isArray(data) ? data : [data].filter(Boolean);
-      setTodosProdutos(produtosArray);
+      let produtosArray = Array.isArray(data) ? data : [];
+      
+      //  Aplica filtro de busca por nome se necessário
+      if (termoBusca && produtosArray.length > 0) {
+        produtosArray = produtosArray.filter(produto =>
+          produto.nome.toLowerCase().includes(termoBusca.toLowerCase())
+        );
+      }
+      
       setProdutos(produtosArray);
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
       setErro('Erro ao carregar produtos');
+      setProdutos([]);
     } finally {
       setCarregando(false);
     }
-  }, []);
-
-  const aplicarFiltros = useCallback(() => {
-    let produtosFiltrados = [...todosProdutos];
-
-    if (termoBusca) {
-      produtosFiltrados = produtosFiltrados.filter(produto =>
-        produto.nome.toLowerCase().includes(termoBusca.toLowerCase())
-      );
-    }
-
-    if (categoriaFiltro) {
-      produtosFiltrados = produtosFiltrados.filter(produto =>
-        produto.categoria?.nome.toLowerCase() === categoriaFiltro.toLowerCase()
-      );
-    }
-
-    setProdutos(produtosFiltrados);
-  }, [termoBusca, categoriaFiltro, todosProdutos]);
+  }, [categoriaFiltro, termoBusca]);
 
   useEffect(() => {
-    carregarTodosProdutos();
-  }, [carregarTodosProdutos]);
-
-  useEffect(() => {
-    if (todosProdutos.length > 0) {
-      aplicarFiltros();
-    }
-  }, [termoBusca, categoriaFiltro, todosProdutos, aplicarFiltros]);
+    carregarProdutos();
+  }, [carregarProdutos]); //  recarrega quando os filtros mudam
 
   const limparFiltros = () => {
     navigate('/', { replace: true });
@@ -111,7 +103,10 @@ function ListaProdutos() {
   };
 
   const formatarValor = (valor: number) => {
-    return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return valor.toLocaleString('pt-BR', { 
+      style: 'currency', 
+      currency: 'BRL' 
+    });
   };
 
   const metaAtingida = (produto: Produto) => {
@@ -186,12 +181,16 @@ function ListaProdutos() {
                     variant="top" 
                     src={produto.imagem_capa} 
                     style={{ height: '200px', objectFit: 'cover' }}
+                    alt={produto.nome}
                   />
                 )}
                 <Card.Body className="d-flex flex-column">
-                  {produto.categoria && (
+                  {/* Verifica se categoria existe e tem nome */}
+                  {produto.categoria && produto.categoria.nome && (
                     <div className="mb-2">
-                      <span className="badge bg-primary">{produto.categoria.nome}</span>
+                      <span className="badge bg-primary">
+                        {produto.categoria.nome}
+                      </span>
                     </div>
                   )}
                   
@@ -208,10 +207,10 @@ function ListaProdutos() {
                       <div className="mb-3">
                         <div className="d-flex justify-content-between mb-1">
                           <small className="text-muted">
-                            Arrecadado: R$ {formatarValor(produto.valor_arrecadado || 0)}
+                            Arrecadado: {formatarValor(produto.valor_arrecadado || 0)}
                           </small>
                           <small className="text-muted">
-                            Meta: R$ {formatarValor(produto.valor_meta)}
+                            Meta: {formatarValor(produto.valor_meta)}
                           </small>
                         </div>
                         <ProgressBar 
