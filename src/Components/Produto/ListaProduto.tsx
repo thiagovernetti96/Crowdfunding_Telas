@@ -112,6 +112,24 @@ function ListaProdutos() {
   const metaAtingida = (produto: Produto) => {
     return calcularProgresso(produto) >= 100;
   };
+  
+  const getImagemUrl = (produto: Produto) => {
+    if (produto.imagem_capa && produto.imagem_capa.includes('http')) {
+      return produto.imagem_capa;
+    }
+    
+    // Se não tem imagem, retorna null ou uma imagem padrão
+    if (!produto.imagem_capa) {
+      return 'https://via.placeholder.com/300x200?text=Sem+Imagem';
+    }
+    
+    // Se tem uma string que parece ser um filename, monta a URL
+    if (produto.imagem_capa.includes('imagem_capa-')) {
+      return `https://crowdfunding-vxjp.onrender.com/uploads/${produto.imagem_capa}`;
+    }
+    
+    return produto.imagem_capa;
+  };
 
   return (
     <Container className="my-4">
@@ -179,7 +197,7 @@ function ListaProdutos() {
                 {produto.imagem_capa && (
                   <Card.Img 
                     variant="top" 
-                    src={produto.imagem_capa} 
+                    src={getImagemUrl(produto)} 
                     style={{ height: '200px', objectFit: 'cover' }}
                     alt={produto.nome}
                   />
