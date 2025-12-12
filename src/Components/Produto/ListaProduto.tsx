@@ -194,14 +194,14 @@ function ListaProdutos() {
           {produtos.map((produto) => (
             <Col key={produto.id} md={6} lg={4} className="mb-4">
               <Card className="h-100 card-produto">
-                {produto.imagem_capa && (
+                {/*{produto.imagem_capa && (
                   <Card.Img 
                     variant="top" 
                     src={getImagemUrl(produto)} 
                     style={{ height: '200px', objectFit: 'cover' }}
                     alt={produto.nome}
                   />
-                )}
+                )}*/}
                 <Card.Body className="d-flex flex-column">
                   {/* Verifica se categoria existe e tem nome */}
                   {produto.categoria && produto.categoria.nome && (

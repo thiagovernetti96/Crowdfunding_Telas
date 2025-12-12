@@ -65,6 +65,10 @@ function CadastroProduto() {
         setPreviewImagem(e.target?.result as string);
       };
       reader.readAsDataURL(file);
+    } else {
+      // Se cancelar a seleção, limpa a imagem
+      setImagem(null);
+      setPreviewImagem("");
     }
   };
 
@@ -81,11 +85,6 @@ function CadastroProduto() {
       return;
     }
 
-    if (!imagem) {
-      alert("Por favor, selecione uma imagem para o produto!");
-      return;
-    }
-
     // Criar FormData para enviar arquivo
     const formData = new FormData();
     formData.append('nome', produto.nome);
@@ -94,6 +93,7 @@ function CadastroProduto() {
     formData.append('criadorId', usuarioLogado.id.toString());
     formData.append('valor_meta', produto.valor_meta.toString());
     
+    // Adiciona imagem apenas se existir
     if (imagem) {
       formData.append('imagem_capa', imagem);
     }
@@ -118,6 +118,7 @@ function CadastroProduto() {
 
       alert("✅ Produto salvo com sucesso!");
       
+      // Limpa o formulário
       setProduto({
         usuarioId: usuarioLogado.id,
         descricao: "",
@@ -189,7 +190,7 @@ function CadastroProduto() {
           <InputGroup className="mb-3" size="lg">
             <InputGroup.Text>Valor da Meta R$:</InputGroup.Text>
             <Form.Control
-              type="text"
+              type="number"
               step="0.01"
               min="0"
               value={produto.valor_meta}
@@ -201,13 +202,13 @@ function CadastroProduto() {
           </InputGroup>
 
           <InputGroup className="mb-3" size="lg">
-            <InputGroup.Text>Imagem do Produto:</InputGroup.Text>
+            <InputGroup.Text>Imagem do Produto (Opcional):</InputGroup.Text> {/* ← Alterado */}
             <Form.Control
               id="imagem_capa"
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              required
+              // SEM required
             />
           </InputGroup>
 
